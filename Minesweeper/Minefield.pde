@@ -31,15 +31,26 @@ public class Minefield{
   }
   
   void reveal(int x, int y){
-    
+    //stroke(0);
+    //fill(0);
+    //circle(x, y, 50);
   }
   
   void flag(int x, int y){
-    
+    //stroke(255);
+    //fill(255);
+    //circle(x, y, 50);
   }
   
   void displayMines(){
-    
+    for(int j = 0; j < revealed.length; j++){
+      for(int k = 0; k < revealed[j].length; k++){
+        if(revealed[j][k]){
+          int mines = countMines(j, k);
+          //print the value at the square (not sure how to do that yet)
+        }  
+      }
+    }
   }
   
   int countMines(int x, int y){
