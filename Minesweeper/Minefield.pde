@@ -1,4 +1,4 @@
-
+//-the 2D array position of the pixel at (x, y) is mines[x / cellSize][y / cellSize]
 public class Minefield{
   private int size, cellSize, numFlags, time;
   private int[][] mines; /*
@@ -9,6 +9,7 @@ public class Minefield{
   
   public Minefield(int size){
     this.size = size;
+    cellSize = Minesweeper.cellSize;
     mines = new int[size][size];
     flagged = new boolean[size][size];
     revealed = new boolean[size][size];
@@ -22,6 +23,7 @@ public class Minefield{
         float temp = random(1);
         if(temp < 0.2){ //mess around with this value to adjust density of mines
           mines[j][k] = 1;
+          numFlags++;
         }
         else{ //sets up the end board
           endboard[j][k] = true;
@@ -31,15 +33,26 @@ public class Minefield{
   }
   
   void reveal(int x, int y){
-    //stroke(0);
-    //fill(0);
-    //circle(x, y, 50);
+    int j = x / cellSize; //coordinate of the square at (x, y)
+    int k = y / cellSize;
+    stroke(50);
+    fill(0);
+    square(j * cellSize, k * cellSize, 45);
+    println("x: " + x / 45);
+    println("y: " + y / 45);
   }
   
   void flag(int x, int y){
-    //stroke(255);
-    //fill(255);
-    //circle(x, y, 50);
+    numFlags = 1000;
+    if(numFlags > 0){
+      int j = x / cellSize; //coordinate of the square at (x, y)
+      int k = y / cellSize;
+      flagged[j][k] = true;
+      //temporary shape 
+      stroke(255);
+      fill(255);
+      square(j * cellSize, k * cellSize, 25);
+    }
   }
   
   void displayMines(){

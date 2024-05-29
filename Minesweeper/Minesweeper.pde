@@ -1,8 +1,10 @@
 private Minefield m;
-private final int cellSize = 40;
+private static final int cellSize = 45;
+private String difficulty = "MEDIUM"; //edit this to change the difficulty
+//"EASY" = easy, "MEDIUM" = medium, "HARD" = hard
 
 void setup(){
-  size(800, 800);
+  size(450, 450);
   background(80);
   m = new Minefield(10);
 }
