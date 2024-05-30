@@ -1,6 +1,6 @@
 //-the 2D array position of the pixel at (x, y) is mines[x / cellSize][y / cellSize]
 public class Minefield{
-  private int size, cellSize, numFlags, time;
+  private int size, cellSize, offset, numFlags, time;
   private int[][] mines; /*
   consists of only 0s and 1s (1 = mine, 0 = no mine)
   reason why it's an int[][] is to calculate nearby mines easily
@@ -10,6 +10,7 @@ public class Minefield{
   public Minefield(int size){
     this.size = size;
     cellSize = Minesweeper.cellSize;
+    offset = Minesweeper.offset;
     mines = new int[size][size];
     flagged = new boolean[size][size];
     revealed = new boolean[size][size];
@@ -34,12 +35,13 @@ public class Minefield{
   
   void reveal(int x, int y){
     int j = x / cellSize; //coordinate of the square at (x, y)
-    int k = y / cellSize;
+    int k = (y - offset) / cellSize;
+    revealed[j][k] = true;
     stroke(50);
     fill(0);
-    square(j * cellSize, k * cellSize, 45);
-    println("x: " + x / 45);
-    println("y: " + y / 45);
+    square(j * cellSize, k * cellSize + offset, 45);
+    //println("x: " + x / 45);
+    //println("y: " + y / 45);
   }
   
   void flag(int x, int y){
@@ -60,7 +62,9 @@ public class Minefield{
       for(int k = 0; k < revealed[j].length; k++){
         if(revealed[j][k]){
           int mines = countMines(j, k);
-          //print the value at the square (not sure how to do that yet)
+          fill(255);
+          text(mines, j * cellSize + (cellSize / 2), k * cellSize + (cellSize / 2) + offset);
+          //print("mines: " + mines);
         }  
       }
     }
@@ -70,7 +74,9 @@ public class Minefield{
     int ret = 0;
     for(int j = x - 1; j <= x + 1; j++){
       for(int k = y - 1; k <= y + 1; k++){
-        if(!(j < 0 || j >= size || y < 0 || y >= size)){
+        if(!(j < 0 || j >= size || k < 0 || k >= size)){
+          print("j: " + j + " ");
+          println("k: " + k);
           ret += mines[j][k];
         }
       }
