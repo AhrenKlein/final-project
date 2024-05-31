@@ -6,6 +6,7 @@ public class Minefield{
   reason why it's an int[][] is to calculate nearby mines easily
   */
   private boolean[][] flagged, revealed, endboard;
+  //NOTE: j and k are always 2D Array indices, x and y are always points on the screen (e.g. mouseX, mouseY)
   
   public Minefield(int size){
     this.size = size;
@@ -37,9 +38,6 @@ public class Minefield{
     int j = x / cellSize; //coordinate of the square at (x, y)
     int k = (y - offset) / cellSize;
     revealed[j][k] = true;
-    stroke(50);
-    fill(0);
-    square(j * cellSize, k * cellSize + offset, 45);
     //println("x: " + x / 45);
     //println("y: " + y / 45);
   }
@@ -63,6 +61,9 @@ public class Minefield{
         if(revealed[j][k]){
           int mines = countMines(j, k);
           fill(255);
+          //if(mines[j][k] == 1){
+          //  fill(255, 0, 0);
+          //}
           text(mines, j * cellSize + (cellSize / 2), k * cellSize + (cellSize / 2) + offset);
           //print("mines: " + mines);
         }  
@@ -75,8 +76,8 @@ public class Minefield{
     for(int j = x - 1; j <= x + 1; j++){
       for(int k = y - 1; k <= y + 1; k++){
         if(!(j < 0 || j >= size || k < 0 || k >= size)){
-          print("j: " + j + " ");
-          println("k: " + k);
+          //print("j: " + j + " ");
+          //println("k: " + k);
           ret += mines[j][k];
         }
       }

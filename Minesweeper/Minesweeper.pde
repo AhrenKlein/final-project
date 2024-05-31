@@ -21,7 +21,27 @@ void setup(){ //implement difficulty
 }
 
 void draw(){ //edit font and size later
-  text(difficulty, 5, 15); 
+  boolean alt = true;
+  for(int y = offset; y < height; y += cellSize){
+    if(((y - offset) / cellSize) % 0.5 == 0){
+      alt = !alt;
+    }
+    for(int x = 0; x < width; x += cellSize){
+      stroke(50);
+      if(alt){
+        fill(124, 220, 10);
+      }
+      else{
+        fill(124, 190, 0);
+      }
+      square(x, y, cellSize);
+      //if(m.flagged[x / cellSize][y / cellSize]){
+      //  m.flag(x, y);
+      //} //FIX THIS!!!!
+      alt = !alt;
+    }
+  }
+  text(difficulty, 5, 15);
   m.displayMines();
 }
 
