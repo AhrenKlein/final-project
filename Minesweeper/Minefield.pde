@@ -8,6 +8,16 @@ public class Minefield{
   private boolean[][] flagged, revealed, endboard;
   //NOTE: j and k are always 2D Array indices, x and y are always points on the screen (e.g. mouseX, mouseY)
   
+  void toString(int[][] mines){
+    for(int j = 0; j < mines.length; j++){
+      for(int k = 0; k < mines[j].length; k++){
+        print(mines[j][k] + " ");
+      }
+      println();
+    }
+  }
+  
+  
   public Minefield(int size){
     this.size = size;
     cellSize = Minesweeper.cellSize;
@@ -37,7 +47,12 @@ public class Minefield{
   void reveal(int x, int y){
     int j = x / cellSize; //coordinate of the square at (x, y)
     int k = (y - offset) / cellSize;
-    revealed[j][k] = true;
+    if(flagged[j][k]){
+      flagged[j][k] = false;
+    }
+    else{
+      revealed[j][k] = true;
+    }
     //println("x: " + x / 45);
     //println("y: " + y / 45);
   }
@@ -46,42 +61,41 @@ public class Minefield{
     numFlags = 1000;
     if(numFlags > 0){
       int j = x / cellSize; //coordinate of the square at (x, y)
-      int k = y / cellSize;
-      flagged[j][k] = true;
-      //temporary shape 
-      stroke(255);
-      fill(255);
-      square(j * cellSize, k * cellSize, 25);
+      int k = (y - offset) / cellSize;
+      if(!revealed[j][k]){
+        flagged[j][k] = true;
+      }
     }
   }
   
-  void displayMines(){
+  void displayMines(){ //FIX THIS STUPID FUNCTION IT DOESNT WORK!!!!
     for(int j = 0; j < revealed.length; j++){
       for(int k = 0; k < revealed[j].length; k++){
         if(revealed[j][k]){
           int mines = countMines(j, k);
           fill(255);
-          //if(mines[j][k] == 1){
-          //  fill(255, 0, 0);
+          //if(mines != 0){
+            text(mines, j * cellSize + (cellSize / 2), k * cellSize + (cellSize / 2) + offset);
           //}
-          text(mines, j * cellSize + (cellSize / 2), k * cellSize + (cellSize / 2) + offset);
           //print("mines: " + mines);
-        }  
+        }
       }
     }
   }
   
-  int countMines(int x, int y){
+  int countMines(int j, int k){
     int ret = 0;
-    for(int j = x - 1; j <= x + 1; j++){
-      for(int k = y - 1; k <= y + 1; k++){
-        if(!(j < 0 || j >= size || k < 0 || k >= size)){
+    for(int r = j - 1; r <= j + 1; r++){
+      for(int c = k - 1; c <= k + 1; c++){
+        if(!(r < 0 || r >= size || c < 0 || c >= size || (r == j && c == k))){
           //print("j: " + j + " ");
           //println("k: " + k);
-          ret += mines[j][k];
+          ret += mines[r][c];
+          //println("mines[" + r + "][" + c + "]: " + mines[r][c]);
         }
       }
     }
+    //println("finifhs loop");
     return ret;
   }
   

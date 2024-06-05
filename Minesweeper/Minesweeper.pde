@@ -5,6 +5,15 @@ private String difficulty = "EASY"; //edit this to change the difficulty
 //"EASY" = easy (10 x 10), "MEDIUM" = medium (15 x 15), "HARD" = hard (20 x 20)
 private int boardSize;
 
+void toString(int[][] mines){
+    for(int j = 0; j < mines.length; j++){
+      for(int k = 0; k < mines[j].length; k++){
+        print(mines[j][k] + " ");
+      }
+      println();
+    }
+  }
+
 void setup(){ //implement difficulty
   if(difficulty.equals("EASY")){
     boardSize = 10;
@@ -18,26 +27,37 @@ void setup(){ //implement difficulty
   windowResize(cellSize * boardSize, cellSize * boardSize + offset);
   background(80);
   m = new Minefield(boardSize);
+  toString(m.mines);
 }
 
 void draw(){ //edit font and size later
   boolean alt = true;
-  for(int y = offset; y < height; y += cellSize){
+  for(int y = offset; y < height; y += cellSize){ //creates a grid of alternating green color
     if(((y - offset) / cellSize) % 0.5 == 0){
       alt = !alt;
     }
     for(int x = 0; x < width; x += cellSize){
-      stroke(50);
-      if(alt){
+      int j = x / cellSize;
+      int k = (y - offset) / cellSize;
+      //stroke(50);
+      if(m.revealed[j][k]){
+        stroke(196, 164, 132);
+        fill(196, 164, 132);
+      }
+      else if(alt){
+        stroke(124, 220, 10);
         fill(124, 220, 10);
       }
       else{
+        stroke(124, 190, 0);
         fill(124, 190, 0);
       }
       square(x, y, cellSize);
-      //if(m.flagged[x / cellSize][y / cellSize]){
-      //  m.flag(x, y);
-      //} //FIX THIS!!!!
+      if(m.flagged[x / cellSize][(y - offset) / cellSize]){
+        stroke(255);
+        fill(255);
+        square(x, y, 25);
+      }
       alt = !alt;
     }
   }
