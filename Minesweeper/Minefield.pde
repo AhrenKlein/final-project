@@ -26,22 +26,27 @@ public class Minefield{
     flagged = new boolean[size][size];
     revealed = new boolean[size][size];
     endboard = new boolean[size][size];
-    placeMines();
   }
   
-  private void placeMines(){
+  private void placeMines(int x, int y){
     for(int j = 0; j < mines.length; j++){
       for(int k = 0; k < mines[j].length; k++){
-        float temp = random(1);
-        if(temp < 0.2){ //mess around with this value to adjust density of mines
-          mines[j][k] = 1;
-          numFlags++;
+        if(!(j == x / cellSize && k == y / cellSize)){
+          float temp = random(1);
+          if(temp < 0.2){ //mess around with this value to adjust density of mines
+            mines[j][k] = 1;
+            numFlags++;
+          }
+          else{ //sets up the end board
+            endboard[j][k] = true;
+          }
         }
-        else{ //sets up the end board
+        else{
           endboard[j][k] = true;
         }
       }
     }
+    //toString(mines);
   }
   
   void reveal(int x, int y){
@@ -68,7 +73,7 @@ public class Minefield{
     }
   }
   
-  void displayMines(){ //FIX THIS STUPID FUNCTION IT DOESNT WORK!!!!
+  void displayMines(){
     for(int j = 0; j < revealed.length; j++){
       for(int k = 0; k < revealed[j].length; k++){
         if(revealed[j][k]){
@@ -95,6 +100,7 @@ public class Minefield{
         }
       }
     }
+    //print("ret: " + ret);
     //println("finifhs loop");
     return ret;
   }
