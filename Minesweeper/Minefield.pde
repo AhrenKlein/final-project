@@ -31,7 +31,7 @@ public class Minefield{
   private void placeMines(int x, int y){
     for(int j = 0; j < mines.length; j++){
       for(int k = 0; k < mines[j].length; k++){
-        if(!(j == x / cellSize && k == y / cellSize)){
+        if(!(j == x / cellSize && k == (y - offset) / cellSize)){
           float temp = random(1);
           if(temp < 0.2){ //mess around with this value to adjust density of mines
             mines[j][k] = 1;
@@ -49,17 +49,24 @@ public class Minefield{
     //toString(mines);
   }
   
-  void reveal(int x, int y){
-    int j = x / cellSize; //coordinate of the square at (x, y)
-    int k = (y - offset) / cellSize;
+  void reveal(int j, int k){
+    //int j = x / cellSize; //coordinate of the square at (x, y)
+    //int k = (y - offset) / cellSize;
     if(flagged[j][k]){
       flagged[j][k] = false;
     }
     else{
       revealed[j][k] = true;
+      for(int c = j - 1; c <= j + 1; c++){
+        for(int r = k - 1; r <= k + 1; r++){
+          if(!(r < 0 || r >= size || c < 0 || c >= size || (r == j && c == k))){
+            if(countMines(r, c) == 0){
+              reveal(r, c);
+            }
+          }
+        }
+      }
     }
-    //println("x: " + x / 45);
-    //println("y: " + y / 45);
   }
   
   void flag(int x, int y){
@@ -89,14 +96,15 @@ public class Minefield{
   }
   
   int countMines(int j, int k){
+    //delay(1000);
     int ret = 0;
-    for(int r = j - 1; r <= j + 1; r++){
-      for(int c = k - 1; c <= k + 1; c++){
+    for(int c = j - 1; c <= j + 1; c++){
+      for(int r = k - 1; r <= k + 1; r++){
         if(!(r < 0 || r >= size || c < 0 || c >= size || (r == j && c == k))){
           //print("j: " + j + " ");
           //println("k: " + k);
           ret += mines[r][c];
-          //println("mines[" + r + "][" + c + "]: " + mines[r][c]);
+          //println("mines[" + c + "][" + r + "]: " + mines[c][r]);
         }
       }
     }

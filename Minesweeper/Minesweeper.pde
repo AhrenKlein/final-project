@@ -5,7 +5,6 @@ private String difficulty = "EASY"; //edit this to change the difficulty
 //"EASY" = easy (10 x 10), "MEDIUM" = medium (15 x 15), "HARD" = hard (20 x 20)
 private int boardSize;
 private boolean firstClick = true;
-int test = 0;
 
 void toString(int[][] mines){
     for(int j = 0; j < mines.length; j++){
@@ -64,23 +63,22 @@ void draw(){ //edit font and size later
   }
   text(difficulty, 5, 15);
   toString(m.mines);
-  print("test: " + test);
-  test++;
   println();
   m.displayMines();
+  //delay(500);
 }
 
 void mousePressed(){
   if(mouseY > offset){
     if(mouseButton == LEFT){
       if(firstClick){
-       firstClick = false;
        m.placeMines(mouseX, mouseY);
+       firstClick = false;
       }
-      m.reveal(mouseX, mouseY);
+      m.reveal(mouseX / cellSize, (mouseY - offset) / cellSize);
     }
     if(mouseButton == RIGHT){
-      m.flag(mouseX, mouseY);
+      m.flag(mouseX , mouseY);
     }
   }
 }
