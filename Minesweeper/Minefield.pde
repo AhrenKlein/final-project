@@ -1,6 +1,6 @@
-//-the 2D array position of the pixel at (x, y) is mines[x / cellSize][y / cellSize]
 public class Minefield{
   private int size, cellSize, offset, numFlags, time;
+  private boolean gameOver = false;
   private int[][] mines; /*
   consists of only 0s and 1s (1 = mine, 0 = no mine)
   reason why it's an int[][] is to calculate nearby mines easily
@@ -31,7 +31,7 @@ public class Minefield{
   private void placeMines(int x, int y){
     for(int j = 0; j < mines.length; j++){
       for(int k = 0; k < mines[j].length; k++){
-        if(!(j == x / cellSize && k == (y - offset) / cellSize)){
+        if(!(k == x / cellSize && j == (y - offset) / cellSize)){
           float temp = random(1);
           if(temp < 0.2){ //mess around with this value to adjust density of mines
             mines[j][k] = 1;
@@ -50,21 +50,25 @@ public class Minefield{
   }
   
   void reveal(int j, int k){
-    //int j = x / cellSize; //coordinate of the square at (x, y)
-    //int k = (y - offset) / cellSize;
     if(flagged[j][k]){
       flagged[j][k] = false;
     }
     else{
-      revealed[j][k] = true;
-      for(int c = j - 1; c <= j + 1; c++){
-        for(int r = k - 1; r <= k + 1; r++){
-          if(!(r < 0 || r >= size || c < 0 || c >= size || (r == j && c == k))){
-            if(countMines(r, c) == 0){
-              reveal(r, c);
-            }
-          }
-        }
+      if(mines[j][k] == 1){
+        gameOver = true;
+        print("GAME OVER!!!!");
+      }
+      else{
+        revealed[j][k] = true;
+      //for(int r = j - 1; c <= j + 1; c++){
+      //  for(int c = k - 1; r <= k + 1; r++){
+      //    if(!(r < 0 || r >= size || c < 0 || c >= size || (r == j && c == k))){
+      //      if(countMines(r, c) == 0){
+      //        reveal(r, c);
+      //      }
+      //    }
+      //  }
+      //}
       }
     }
   }
@@ -86,25 +90,28 @@ public class Minefield{
         if(revealed[j][k]){
           int mines = countMines(j, k);
           fill(255);
-          //if(mines != 0){
+          if(mines != 0){
             text(mines, j * cellSize + (cellSize / 2), k * cellSize + (cellSize / 2) + offset);
-          //}
+          }
           //print("mines: " + mines);
+        }
+        if(gameOver){ //show red squares revealing every mine if the game is lost
+          if(mines[j][k] == 1){
+            stroke(255, 0, 0);
+            fill(240, 0, 0);
+            square(k * cellSize + 10, j * cellSize + offset + 5, 25);
+          }
         }
       }
     }
   }
   
   int countMines(int j, int k){
-    //delay(1000);
     int ret = 0;
     for(int c = j - 1; c <= j + 1; c++){
       for(int r = k - 1; r <= k + 1; r++){
-        if(!(r < 0 || r >= size || c < 0 || c >= size || (r == j && c == k))){
-          //print("j: " + j + " ");
-          //println("k: " + k);
+        if(!(r < 0 || r >= size || c < 0 || c >= size || (r == k && c == j))){
           ret += mines[r][c];
-          //println("mines[" + c + "][" + r + "]: " + mines[c][r]);
         }
       }
     }
@@ -113,12 +120,12 @@ public class Minefield{
     return ret;
   }
   
-  void gameOver(boolean winner){
-    if(winner){ //show a victory screen
+//  void gameOver(boolean winner){
+//    if(winner){ //show a victory screen
       
-    }
-    else{ //show a "you lost" screen
+//    }
+//    else{ //show a "you lost" screen
       
-    }
-  }
+//    }
+//  }
 }
