@@ -1,5 +1,5 @@
 public class Minefield{
-  private int size, cellSize, offset, numFlags, time;
+  private int size, cellSize, offset, numFlags;
   private boolean gameOver = false;
   private int[][] mines; /*
   consists of only 0s and 1s (1 = mine, 0 = no mine)
@@ -7,32 +7,6 @@ public class Minefield{
   */
   private boolean[][] flagged, revealed, endboard;
   //NOTE: j and k are always 2D Array indices, x and y are always points on the screen (e.g. mouseX, mouseY)
-  
-  void toString(int[][] mines){
-    for(int j = 0; j < mines.length; j++){
-      for(int k = 0; k < mines[j].length; k++){
-        print(mines[j][k] + " ");
-      }
-      println();
-    }
-  }
-  
-  String toString(boolean[][] array){
-    String ret = "";
-    for(int j = 0; j < array.length; j++){
-      for(int k = 0; k < array[j].length; k++){
-        if(array[j][k]){
-          ret += ("1 ");
-        }
-        else{
-          ret += ("0 ");
-        }
-      }
-      ret += "\n";
-    }
-    return ret;
-  }
-  
   
   public Minefield(int size){
     this.size = size;
@@ -65,7 +39,7 @@ public class Minefield{
               (k == c - 1 && j == r + 1) ||
               (k == c - 1 && j == r - 1))){ //mine cannot be placed at or around the location of the first click
             float temp = random(1);
-            if(temp < 0.2){ //mess around with this value to adjust density of mines
+            if(temp < 0.2){ // adjust this value to change the density of mines (higher value = more dense);
               mines[j][k] = 1;
               numFlags++;
               max--;
@@ -91,7 +65,7 @@ public class Minefield{
     else{
       if(mines[j][k] == 1){
         gameOver = true;
-        print("GAME OVER!!!!");
+        print("GAME OVER!");
       }
       else{
         revealed[j][k] = true;
@@ -128,7 +102,6 @@ public class Minefield{
               }
             }
           }
-          //print("mines: " + mines);
         }
         if(gameOver){ //show red squares revealing every mine if the game is lost
           if(mines[j][k] == 1){
