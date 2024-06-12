@@ -17,6 +17,22 @@ public class Minefield{
     }
   }
   
+  String toString(boolean[][] array){
+    String ret = "";
+    for(int j = 0; j < array.length; j++){
+      for(int k = 0; k < array[j].length; k++){
+        if(array[j][k]){
+          ret += ("1 ");
+        }
+        else{
+          ret += ("0 ");
+        }
+      }
+      ret += "\n";
+    }
+    return ret;
+  }
+  
   
   public Minefield(int size){
     this.size = size;
@@ -28,30 +44,49 @@ public class Minefield{
     endboard = new boolean[size][size];
   }
   
-  private void placeMines(int x, int y){
-    for(int j = 0; j < mines.length; j++){
-      for(int k = 0; k < mines[j].length; k++){
-        if(!(k == x / cellSize && j == (y - offset) / cellSize)){
-          float temp = random(1);
-          if(temp < 0.2){ //mess around with this value to adjust density of mines
-            mines[j][k] = 1;
-            numFlags++;
-          }
-          else{ //sets up the end board
-            endboard[j][k] = true;
-          }
+  private void placeMines(int y, int x){ //row, col
+    int max = mines.length;
+    int r = (y - offset) / cellSize;
+    int c = x / cellSize;
+    for(int j = 0; j < mines.length; j++){ //row
+      for(int k = 0; k < mines[j].length; k++){ //col
+        if(max == 0){
+          break;
         }
         else{
+          if(!(
+              (k == c && j == r) ||
+              (k == c && j == r + 1) ||
+              (k == c && j == r - 1) ||
+              (k == c + 1 && j == r) ||
+              (k == c + 1 && j == r + 1) ||
+              (k == c + 1 && j == r - 1) ||
+              (k == c - 1 && j == r) ||
+              (k == c - 1 && j == r + 1) ||
+              (k == c - 1 && j == r - 1))){ //mine cannot be placed at or around the location of the first click
+            float temp = random(1);
+            if(temp < 0.2){ //mess around with this value to adjust density of mines
+              mines[j][k] = 1;
+              numFlags++;
+              max--;
+            }
+          }
+        }
+      }
+    }
+    for(int j = 0; j < endboard.length; j++){
+      for(int k = 0; k < endboard[j].length; k++){
+        if(mines[j][k] == 0){
           endboard[j][k] = true;
         }
       }
     }
-    //toString(mines);
   }
   
-  void reveal(int j, int k){
+  void reveal(int j, int k){ //row, col
     if(flagged[j][k]){
       flagged[j][k] = false;
+      numFlags++;
     }
     else{
       if(mines[j][k] == 1){
@@ -60,38 +95,38 @@ public class Minefield{
       }
       else{
         revealed[j][k] = true;
-      //for(int r = j - 1; c <= j + 1; c++){
-      //  for(int c = k - 1; r <= k + 1; r++){
-      //    if(!(r < 0 || r >= size || c < 0 || c >= size || (r == j && c == k))){
-      //      if(countMines(r, c) == 0){
-      //        reveal(r, c);
-      //      }
-      //    }
-      //  }
-      //}
       }
     }
   }
   
-  void flag(int x, int y){
-    numFlags = 1000;
+  void flag(int y, int x){
     if(numFlags > 0){
-      int j = x / cellSize; //coordinate of the square at (x, y)
-      int k = (y - offset) / cellSize;
-      if(!revealed[j][k]){
+      int k = x / cellSize; //coordinate of the square at (x, y)
+      int j = (y - offset) / cellSize;
+      if(!revealed[j][k] && !flagged[j][k]){
         flagged[j][k] = true;
+        numFlags--;
       }
     }
   }
   
   void displayMines(){
-    for(int j = 0; j < revealed.length; j++){
+    for(int j = 0; j < revealed.length; j++){ //j = row, k = col
       for(int k = 0; k < revealed[j].length; k++){
         if(revealed[j][k]){
           int mines = countMines(j, k);
           fill(255);
           if(mines != 0){
-            text(mines, j * cellSize + (cellSize / 2), k * cellSize + (cellSize / 2) + offset);
+            text(mines, k * cellSize + (cellSize / 2), j * cellSize + (cellSize / 2) + offset);
+          }
+          else{
+            for(int r = j - 1; r <= j + 1; r++){
+              for(int c = k - 1; c <= k + 1; c++){
+                if(!(r < 0 || r >= size || c < 0 || c >= size || (r == j && c == k))){
+                  reveal(r, c);
+                }
+              }
+            }
           }
           //print("mines: " + mines);
         }
@@ -106,26 +141,15 @@ public class Minefield{
     }
   }
   
-  int countMines(int j, int k){
+  int countMines(int j, int k){ //row, col
     int ret = 0;
-    for(int c = j - 1; c <= j + 1; c++){
-      for(int r = k - 1; r <= k + 1; r++){
-        if(!(r < 0 || r >= size || c < 0 || c >= size || (r == k && c == j))){
+    for(int r = j - 1; r <= j + 1; r++){ //row
+      for(int c = k - 1; c <= k + 1; c++){ //col
+        if(!(r < 0 || r >= size || c < 0 || c >= size || (r == j && c == k))){
           ret += mines[r][c];
         }
       }
     }
-    //print("ret: " + ret);
-    //println("finifhs loop");
     return ret;
   }
-  
-//  void gameOver(boolean winner){
-//    if(winner){ //show a victory screen
-      
-//    }
-//    else{ //show a "you lost" screen
-      
-//    }
-//  }
 }
